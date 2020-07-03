@@ -82,6 +82,7 @@ export const Schedule = styled.div`
     span {
       display: flex;
       align-items: center;
+      text-transform: capitalize;
     }
 
     span + span::before {
@@ -154,9 +155,14 @@ export const Section = styled.div`
     color: #999591;
     font-size: 20px;
     line-height: 26px;
+    border-bottom: 1px solid #3e3b47;
     display: block;
     padding-bottom: 16px;
     margin-bottom: 16px;
+  }
+
+  > p {
+    color: #999591;
   }
 `;
 
@@ -173,6 +179,7 @@ export const Appointment = styled.div`
     display: flex;
     align-items: center;
     color: #f4ede8;
+    width: 70px;
 
     svg {
       color: #ff9000;
