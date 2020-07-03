@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { isToday, format, isAfter, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import DayPicker, { DayModifiers } from 'react-day-picker';
+import { RiLoader4Line } from 'react-icons/ri';
 
 import 'react-day-picker/lib/style.css';
 
@@ -11,6 +12,7 @@ import {
   Header,
   HeaderContent,
   Profile,
+  Loading,
   Content,
   Schedule,
   NextAppointment,
@@ -41,6 +43,7 @@ interface Appointment {
 const Dashboard: React.FC = () => {
   const { signOut, user } = useAuth();
 
+  const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [monthAvailability, setMonthAvailability] = useState<
@@ -71,6 +74,7 @@ const Dashboard: React.FC = () => {
   }, [currentMonth, user.id]);
 
   useEffect(() => {
+    setLoading(true);
     api
       .get<Appointment[]>('/appointments/me', {
         params: {
@@ -86,6 +90,7 @@ const Dashboard: React.FC = () => {
             hourFormatted: format(parseISO(appointment.date), "HH':'mm"),
           };
         });
+        setLoading(false);
         setAppointments(appointmentsFormatted);
       });
   }, [selectedDate]);
@@ -152,7 +157,6 @@ const Dashboard: React.FC = () => {
           </button>
         </HeaderContent>
       </Header>
-
       <Content>
         <Schedule>
           <h1>Horários Agendados</h1>
@@ -179,54 +183,62 @@ const Dashboard: React.FC = () => {
             </NextAppointment>
           )}
 
-          <Section>
-            <strong>Manhã</strong>
+          {loading ? (
+            <Loading>
+              <RiLoader4Line />
+            </Loading>
+          ) : (
+            <>
+              <Section>
+                <strong>Manhã</strong>
 
-            {morningAppointments.length === 0 && (
-              <p>Nehum agendamento neste perído</p>
-            )}
+                {morningAppointments.length === 0 && (
+                  <p>Nehum agendamento neste perído</p>
+                )}
 
-            {morningAppointments.map(appointment => (
-              <Appointment key={appointment.id}>
-                <span>
-                  <FiClock />
-                  {appointment.hourFormatted}
-                </span>
+                {morningAppointments.map(appointment => (
+                  <Appointment key={appointment.id}>
+                    <span>
+                      <FiClock />
+                      {appointment.hourFormatted}
+                    </span>
 
-                <div>
-                  <img
-                    src={appointment.user.avatar_url}
-                    alt={appointment.user.name}
-                  />
-                  <strong>{appointment.user.name}</strong>
-                </div>
-              </Appointment>
-            ))}
-          </Section>
-          <Section>
-            <strong>Tarde</strong>
+                    <div>
+                      <img
+                        src={appointment.user.avatar_url}
+                        alt={appointment.user.name}
+                      />
+                      <strong>{appointment.user.name}</strong>
+                    </div>
+                  </Appointment>
+                ))}
+              </Section>
+              <Section>
+                <strong>Tarde</strong>
 
-            {afternoonAppointments.length === 0 && (
-              <p>Nehum agendamento neste perído</p>
-            )}
+                {afternoonAppointments.length === 0 && (
+                  <p>Nehum agendamento neste perído</p>
+                )}
 
-            {afternoonAppointments.map(appointment => (
-              <Appointment key={appointment.id}>
-                <span>
-                  <FiClock />
-                  {appointment.hourFormatted}
-                </span>
+                {afternoonAppointments.map(appointment => (
+                  <Appointment key={appointment.id}>
+                    <span>
+                      <FiClock />
+                      {appointment.hourFormatted}
+                    </span>
 
-                <div>
-                  <img
-                    src={appointment.user.avatar_url}
-                    alt={appointment.user.name}
-                  />
-                  <strong>{appointment.user.name}</strong>
-                </div>
-              </Appointment>
-            ))}
-          </Section>
+                    <div>
+                      <img
+                        src={appointment.user.avatar_url}
+                        alt={appointment.user.name}
+                      />
+                      <strong>{appointment.user.name}</strong>
+                    </div>
+                  </Appointment>
+                ))}
+              </Section>
+            </>
+          )}
         </Schedule>
         <Calendar>
           <DayPicker

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
 
 export const Container = styled.div``;
@@ -55,6 +55,28 @@ export const Profile = styled.div`
     strong {
       color: #ff9000;
     }
+  }
+`;
+
+const loadingAnimation = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const Loading = styled.div`
+  flex: 1;
+  margin: 100px auto;
+  display: flex;
+
+  svg {
+    animation: ${loadingAnimation} 2s linear infinite;
+    color: #999591;
+    font-size: 40px;
+    margin: 0 auto;
   }
 `;
 
